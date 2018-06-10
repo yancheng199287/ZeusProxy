@@ -4,6 +4,7 @@ import io.netty.bootstrap.Bootstrap
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
 import io.netty.handler.codec.http.FullHttpRequest
+import io.netty.handler.codec.http.HttpHeaderNames
 import io.netty.util.CharsetUtil
 import net.ftzcode.util.AppConf
 import org.slf4j.LoggerFactory
@@ -21,7 +22,7 @@ class RequestClientHandler : SimpleChannelInboundHandler<FullHttpRequest>() {
     private val logger = LoggerFactory.getLogger("RequestClientHandler")
 
     override fun channelActive(ctx: ChannelHandlerContext?) {
-       // println("客户端请求通道激活...")
+        // println("客户端请求通道激活...")
     }
 
     override fun channelRead0(ctx: ChannelHandlerContext?, msg: FullHttpRequest?) {
@@ -44,15 +45,15 @@ class RequestClientHandler : SimpleChannelInboundHandler<FullHttpRequest>() {
             msg.headers().set("Host", remoteHost)
             sb.append("${it.key}  : ${it.value}  \n")
         }
+        msg.headers().set(HttpHeaderNames.ACCEPT, "*/*")
         sb.append("RequestData：$responseContent \n")
         sb.append("TargetUrl：$url， Method：$method，HttpVersion：$httpVersion \n\n")
         logger.info(sb.toString())
 
-
         val b = Bootstrap()
         b.group(inboundChannel.eventLoop())
                 .channel(inboundChannel.javaClass)
-                .handler(ResponseHandlerInitializer(inboundChannel))
+                .handler(ResponseHandlerInitializer(inboundChannel, remotePort == 443))
         val f = b.connect(remoteHost, remotePort)
         //获取客户端请求远程服务器通道
         var outboundChannel = f.channel()
@@ -71,7 +72,7 @@ class RequestClientHandler : SimpleChannelInboundHandler<FullHttpRequest>() {
 
 
     override fun channelInactive(ctx: ChannelHandlerContext?) {
-       // println("客户端请求通道已经失效...")
+        // println("客户端请求通道已经失效...")
         ctx!!.channel().close()
     }
 

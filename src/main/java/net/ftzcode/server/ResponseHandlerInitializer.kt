@@ -13,13 +13,13 @@ import io.netty.handler.codec.http.HttpObjectAggregator
  * Blog:www.520code.net
  * 处理客户端返回响应给客户端的初始化管理者
  */
-class ResponseHandlerInitializer(var inboundChannel: Channel) : ChannelInitializer<SocketChannel>(){
+class ResponseHandlerInitializer(var requestId:String,var inboundChannel: Channel) : ChannelInitializer<SocketChannel>(){
 
     override fun initChannel(ch: SocketChannel?) {
         ch!!.pipeline().addLast(HttpClientCodec())
                 .addLast(HttpObjectAggregator(1024*1024*100))
                 //注意客户端请求数据不要压缩数据，否则请求失败.addLast(HttpContentCompressor(1))
-                .addLast(ResponseClientHandler(inboundChannel))
+                .addLast(ResponseClientHandler(requestId,inboundChannel))
     }
 
 }

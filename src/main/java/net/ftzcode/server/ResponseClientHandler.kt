@@ -9,6 +9,7 @@ import io.netty.handler.codec.http.FullHttpResponse
 import io.netty.handler.codec.http.HttpHeaderNames.*
 import io.netty.util.CharsetUtil
 import org.slf4j.LoggerFactory
+import java.lang.StringBuilder
 
 /**
  * Created by WangZiHe on 2017/8/29.
@@ -17,7 +18,7 @@ import org.slf4j.LoggerFactory
  * Blog:www.520code.net
  */
 
-class ResponseClientHandler(private var inboundChannel: Channel) : SimpleChannelInboundHandler<FullHttpResponse>() {
+class ResponseClientHandler(private var requestId: String, private var inboundChannel: Channel) : SimpleChannelInboundHandler<FullHttpResponse>() {
 
     private val logger = LoggerFactory.getLogger("ResponseClientHandler")
 
@@ -40,9 +41,13 @@ class ResponseClientHandler(private var inboundChannel: Channel) : SimpleChannel
 
         //客户端请求本服务，本服务请求的远程服务返回的数据
 
-       // val contentType=msg.headers()["Content-Type"]
-       // var response = msg.content().toString(CharsetUtil.UTF_8)
-       // logger.info("\n ResponseData:\n" + response)
+        //val contentType = msg.headers()["Content-Type"]
+        val response = msg.content().toString(CharsetUtil.UTF_8)
+        val sb = StringBuilder()
+        sb.append("\n ResponseData:")
+                .append("\n requestId:$requestId")
+                .append("\n $response \n")
+        logger.info(sb.toString())
 
 
         // 将请求远程服务器返回的数据写入到浏览器客户端   inboundChannel是浏览器客户端的通道

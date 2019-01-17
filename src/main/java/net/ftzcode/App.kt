@@ -15,6 +15,7 @@ import net.ftzcode.util.AppConf
 fun main(args: Array<String>) {
     println("-----------------------------------------------------------\n")
     println("Welcome to use ZeusProxy！ Power By YC @ www.520code.net")
+    println("Welcome to add QQ GROUP 368512253")
     println("Project: https://github.com/yancheng199287/ZeusProxy ")
     println("\n-----------------------------------------------------------\n")
 
